@@ -1,11 +1,11 @@
 <?php
 
 namespace BackendBundle\Entity;
-
+use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * User
  */
-class User
+class User implements UserInterface
 {
     /**
      * @var integer
@@ -57,7 +57,26 @@ class User
      */
     private $image;
 
-
+    public function getUsername(){
+        return $this->email;    
+    }
+    
+    public function getSalt(){
+        return null;
+    }
+    
+    public function getRoles(){
+        return array('ROLE_USER', 'ROLE_ADMIN');
+    }
+    
+    public function eraseCredentials(){
+        
+    }
+    
+    public function __toString() {
+        return $this->name;
+    }
+    
     /**
      * Get id
      *

@@ -29,28 +29,28 @@ class RegisterType extends AbstractType
                 'label' => 'Apellidos',
                 'required' => 'required',
                 'attr' => array(
-                    'class' => 'form-name form-control'
+                    'class' => 'form-surname form-control'
                 )
             ))
             ->add('nick', TextType::class, array(
                 'label' => 'Nick',
                 'required' => 'required',
                 'attr' => array(
-                    'class' => 'form-name form-control nick-input'
+                    'class' => 'form-nick form-control nick-input'
                 )
             ))
             ->add('email', EmailType::class, array(
                 'label' => 'Correo electronico',
                 'required' => 'required',
                 'attr' => array(
-                    'class' => 'form-name form-control nick-input'
+                    'class' => 'form-email form-control'
                 )
             ))
             ->add('password', PasswordType::class, array(
                 'label' => 'Contraseña',
                 'required' => 'required',
                 'attr' => array(
-                    'class' => 'form-name form-control nick-input'
+                    'class' => 'form-password form-control'
                 )
             ))
             ->add('Registrarse', SubmitType::class, array(

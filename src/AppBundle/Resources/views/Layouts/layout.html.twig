@@ -11,10 +11,13 @@
             <link href="{{ asset('assets/css/styles.css') }}" type="text/css" rel="stylesheet" />
         {% endblock %}
 
-        {% block javascript %} 
+        {% block javascripts %} 
+            <script type="text/javascript"> 
+                var URL = "{{ app.request.getSchemeAndHttpHost() }}/curso-social-network/web/app_dev.php";
+            </script>
             <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
             <script src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
-        {% endblock %}          
+        {% endblock %} 
     </head>
     <body>
         <header>
@@ -52,6 +55,15 @@
             </nav>
         </header>
         <section id="content">
+            <div class="container">
+                <div class="col-lg-11">
+                     {% for message in app.session.flashbag().get('status') %}
+                         <div class="alert alert-success"> {{ message }} </div>
+                     {% endfor %}
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            
             {% block content %}
                 Content default
             {% endblock %}
