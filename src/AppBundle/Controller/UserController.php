@@ -113,29 +113,29 @@ class UserController extends Controller {
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $em = $this->getDoctrine()->getManager();
-                
+
                 $query = $em->createQuery('SELECT u FROM BackendBundle:User u WHERE u.email = :email OR u.nick = :nick')
                         ->setParameter('email', $form->get("email")->getData())
                         ->setParameter('nick', $form->get("nick")->getData());
                 $user_isset = $query->getResult();
 
-                if (($user->getEmail() == $user_isset[0]->getEmail() && $user->getNick() == $user_isset[0]->getNick()) || count($user_isset) == 0) {
+                if (count($user_isset) == 0 || ($user->getEmail() == $user_isset[0]->getEmail() && $user->getNick() == $user_isset[0]->getNick())) {
 
                     //upload file
                     $file = $form["image"]->getData();
-                    
-                    if(!empty($file) && $file !=null){
+
+                    if (!empty($file) && $file != null) {
                         $ext = $file->guessExtension();
-                        if($ext == 'jpg' || $ext == 'jpeg' || $ext == 'png' || $ext == 'gif'){
-                            $file_name = $user->getId().time().'.'.$ext;
+                        if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'png' || $ext == 'gif') {
+                            $file_name = $user->getId() . time() . '.' . $ext;
                             $file->move("uploads/users", $file_name);
-                            
+
                             $user->setImage($file_name);
                         }
-                    }else{
+                    } else {
                         $user->setImage($user_image);
                     }
-                    
+
                     $em->persist($user);
                     $flush = $em->flush();
 
@@ -157,5 +157,48 @@ class UserController extends Controller {
         return $this->render('AppBundle:User:edit_user.html.twig', array(
                     "form" => $form->createView()
         ));
+    }
+
+    public function usersAction(Request $request) {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $dql = "SELECT u FROM BackendBundle:User u ORDER BY u.id ASC";
+        $query = $em->createQuery($dql);
+
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+                $query, $request->query->getInt('page', 1), 5
+        );
+                
+        return $this->render('AppBundle:User:users.html.twig', array(
+                    'pagination' => $pagination
+        ));   
+    }
+
+    public function searchAction(Request $request) {
+
+        $em = $this->getDoctrine()->getManager();
+        
+        $search = $request->query->get("search",null);
+        
+        if($search == null){
+            return $this->redirect($this->generateURL('home_publications'));
+        }
+
+        $dql = "SELECT u FROM BackendBundle:User u"
+                ." WHERE u.name LIKE :search OR u.surname LIKE :search"
+                ." OR u.nick LIKE :search ORDER BY u.id ASC";
+        $query = $em->createQuery($dql)
+                ->setParameter('search', "%$search%");
+
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+                $query, $request->query->getInt('page', 1), 5
+        );
+                
+        return $this->render('AppBundle:User:users.html.twig', array(
+                    'pagination' => $pagination
+        ));   
     }
 }
